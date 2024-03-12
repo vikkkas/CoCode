@@ -1,18 +1,76 @@
 /** @format */
 
-import React, {useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
+import toast from "react-hot-toast";
+import ACTIONS from "../Actions";
 import Client from "../components/Client";
 import Editor from "../components/Editor";
+import {initSocket} from "../socket";
+import { useLocation, useNavigate, Navigate, useParams } from "react-router-dom";
 
 const EditorPage = () => {
-    const [clients,setClients] = useState(
-        [
-            {socketId: 1, username: 'Rakesh k'},
-            {socketId: 2, username: 'John doe'},
-            {socketId: 3, username: 'John doe'}
+    const socketRef = useRef(null);
+    const location = useLocation();
+    const { sessionId } = useParams();
+    const reactNavigator = useNavigate();
+    const [clients,setClients] = useState([]);
 
-        ]
-    );
+
+    useEffect(()=>{
+        const init = async () =>{
+            socketRef.current = await initSocket();
+            socketRef.current.on('connect_error', (err) => handleErrors(err));
+            socketRef.current.on('connect_failed', (err) => handleErrors(err));
+
+            function handleErrors(e) {
+                console.log('socket error', e);
+                toast.error('Socket connection failed, try again later.');
+                reactNavigator('/');
+            }
+            socketRef.current.emit(ACTIONS.JOIN,{
+                sessionId,
+                username: location.state?.username,
+            });
+            // Listening for joined event
+            socketRef.current.on(
+                ACTIONS.JOINED,
+                ({ clients, username, socketId }) => {
+                    if (username !== location.state?.username) {
+                        toast.success(`${username} joined the session.`);
+                        console.log(`${username} joined`);
+                    }
+                    setClients(clients);
+                    // socketRef.current.emit(ACTIONS.SYNC_CODE, {
+                    //     code: codeRef.current,
+                    //     socketId,
+                    // });
+                }
+            );
+
+            // Listening for disconnected
+            socketRef.current.on(
+                ACTIONS.DISCONNECTED,
+                ({ socketId, username }) => {
+                    toast.success(`${username} left the session.`);
+                    setClients((prev) => {
+                        return prev.filter(
+                            (client) => client.socketId !== socketId
+                        );
+                    });
+                }
+            );
+        };
+        init();
+        return () => {
+            // Cleaning the functions to prevent memory leak.
+            socketRef.current.disconnect();
+            socketRef.current.off(ACTIONS.JOINED);
+            socketRef.current.off(ACTIONS.DISCONNECTED);
+        };
+    },[]);
+    if (!location.state) {
+        return <Navigate to="/" />;
+    } 
     return (
         <div className="mainWrap">
             {/* Left Pannel */}
