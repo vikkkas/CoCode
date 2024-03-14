@@ -10,6 +10,7 @@ import { useLocation, useNavigate, Navigate, useParams } from "react-router-dom"
 
 const EditorPage = () => {
     const socketRef = useRef(null);
+    const codeRef = useRef(null);
     const location = useLocation();
     const { sessionId } = useParams();
     const reactNavigator = useNavigate();
@@ -40,10 +41,10 @@ const EditorPage = () => {
                         console.log(`${username} joined`);
                     }
                     setClients(clients);
-                    // socketRef.current.emit(ACTIONS.SYNC_CODE, {
-                    //     code: codeRef.current,
-                    //     socketId,
-                    // });
+            socketRef.current.emit(ACTIONS.SYNC_CODE, {
+                code: codeRef.current,
+                socketId,
+            });
                 }
             );
 
@@ -68,6 +69,22 @@ const EditorPage = () => {
             socketRef.current.off(ACTIONS.DISCONNECTED);
         };
     },[]);
+    
+    async function copySessionId() {
+        try {
+            await navigator.clipboard.writeText(sessionId);
+            toast.success('Session ID has been copied to your clipboard');
+        } catch (err) {
+            toast.error('Could not copy the Room ID');
+            console.error(err);
+        }
+    }
+
+    function leaveSession() {
+        reactNavigator('/');
+    }
+
+
     if (!location.state) {
         return <Navigate to="/" />;
     } 
@@ -93,11 +110,11 @@ const EditorPage = () => {
                     </div>
 
                 </div>
-                <button className="btn copyBtn"> Copy Session ID</button>
-                <button className="btn leaveBtn ">Leave Session</button>
+                <button className="btn copyBtn" onClick={copySessionId}> Copy Session ID</button>
+                <button className="btn leaveBtn" onClick={leaveSession}>Leave Session</button>
             </div>
             <div className="editorWrap">
-             <Editor/>
+             <Editor socketRef={socketRef} sessionId={sessionId} onCodeChange = {(code)=>{codeRef.current=code;}}/>
             </div>
         </div>
     );
