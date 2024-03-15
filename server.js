@@ -7,6 +7,13 @@ const ACTIONS = require('./src/Actions');
 
 const server = http.createServer(app);
 const io = new Server(server);
+
+// Connecting the build version with the server
+app.use(express.static('build'));
+// refresh bug
+app.use((req,res,next)=>{
+    res.sendFile(path.join(__dirname,'build','index.html'));
+});
 const userSocketMap = {};
 
 function getAllConnectedClients(sessionId) {
