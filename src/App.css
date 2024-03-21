@@ -66,7 +66,18 @@ footer a {
     margin-left: auto;
 }
 
-.joinBtn:hover,
+.downloadBtn {
+    background: #ffffff;
+    color: #000000;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.copyBtn {
+    background: #ffffff;
+    color: #000000;
+    width: 100%;
+}
+.joinBtn:hover, 
 .leaveBtn:hover {
     background: #edf2f4;
 }
