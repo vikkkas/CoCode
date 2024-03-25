@@ -6,6 +6,7 @@ import ACTIONS from "../Actions";
 import Client from "../components/Client";
 import Editor from "../components/Editor";
 import {initSocket} from "../socket";
+import axios from 'axios';
 import { useLocation, useNavigate, Navigate, useParams } from "react-router-dom";
 
 const EditorPage = () => {
@@ -108,9 +109,31 @@ function downloadEditorText() {
     // Remove the link from the body
     document.body.removeChild(link);
 }
+
+function saveCodeToDatabase() {
+    // Get the text from the codeRef
+    var text = codeRef.current;
+
+    // Get the session id
+    // You need to replace this with the actual way of getting the session id in your application
+
+    // Make a POST request to the backend service
+    console.log(sessionId);
+    axios.post('http://localhost:5000/save-code', {
+        sessionId: sessionId,
+        code: text
+    })
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.error(error);
+    });
+}
     if (!location.state) {
         return <Navigate to="/" />;
-    } 
+    }
+     
     return (
         <div className="mainWrap">
             {/* Left Pannel */}
@@ -134,6 +157,7 @@ function downloadEditorText() {
 
                 </div>
                 <button className ="btn downloadBtn" onClick={downloadEditorText}>Download Code</button>
+                <button className="btn saveBtn" onClick={saveCodeToDatabase}>Save Code</button>
                 <button className="btn copyBtn" onClick={copySessionId}> Copy Session ID</button>
                 <button className="btn leaveBtn" onClick={leaveSession}>Leave Session</button>
             </div>

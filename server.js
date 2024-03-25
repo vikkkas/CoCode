@@ -4,9 +4,42 @@ const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
 const ACTIONS = require('./src/Actions');
+const mongoose = require('mongoose');
+const cors = require('cors'); // Import cors
 
 const server = http.createServer(app);
 const io = new Server(server);
+
+app.use(cors(({
+    origin: 'http://localhost:3000'})));
+// Connect to your MongoDB database using Mongoose
+mongoose.connect('mongodb://localhost:27017/co-code', { useNewUrlParser: true, useUnifiedTopology: true }).then(()=> console.log("MongoDB connected"));
+// Define a schema and a model for your code documents
+const codeSchema = new mongoose.Schema({
+    sessionId: String,
+    code: String
+  }); 
+  
+const Code = mongoose.model('Code', codeSchema); //Mongo Object
+
+app.use(express.json()); // Make sure to use this middleware to parse JSON bodies
+app.post('/save-code', async (req, res) => {
+    // Get the session id and the code from the request body
+    const { sessionId, code } = req.body;
+
+    // Find a document with the same session id and update it
+    try {
+        const updatedCode = await Code.findOneAndUpdate(
+            { sessionId: sessionId }, // find a document with this filter
+            { code: code }, // update the document with this data
+            { new: true, upsert: true } // options: return updated one, create if doesn't exist
+        );
+
+        res.send(updatedCode);
+    } catch (err) {
+        res.status(500).send({ error: 'An error has occurred' });
+    }
+});
 
 // Connecting the build version with the server
 app.use(express.static('build'));
