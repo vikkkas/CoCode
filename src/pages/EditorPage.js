@@ -16,6 +16,7 @@ const EditorPage = () => {
     const { sessionId } = useParams();
     const reactNavigator = useNavigate();
     const [clients,setClients] = useState([]);
+    const editorRef = useRef();
 
 
     useEffect(()=>{
@@ -143,7 +144,7 @@ const loadCode = async () => {
         const savedCode = response.data.code;
         // your code to load savedCode into the editor
         console.log(savedCode);
-        codeRef.current = savedCode;
+        editorRef.current.setValue(savedCode);
     }
 };
     if (!location.state) {
@@ -170,16 +171,15 @@ const loadCode = async () => {
                             clients.map((client)=> (<Client key={client.socketId} username={client.username}/>))
                         }
                     </div>
-
                 </div>
                 <button className ="btn downloadBtn" onClick={downloadEditorText}>Download Code</button>
-                <button onClick={loadCode}>Load Code</button>
+                <button className="btn loadCodeBtn" onClick={loadCode}>Load Code</button>
                 <button className="btn saveBtn" onClick={saveCodeToDatabase}>Save Code</button>
                 <button className="btn copyBtn" onClick={copySessionId}> Copy Session ID</button>
                 <button className="btn leaveBtn" onClick={leaveSession}>Leave Session</button>
             </div>
             <div className="editorWrap">
-             <Editor socketRef={socketRef} sessionId={sessionId} onCodeChange = {(code)=>{codeRef.current=code;}}/>
+             <Editor editorRef={editorRef} socketRef={socketRef} sessionId={sessionId} onCodeChange = {(code)=>{codeRef.current=code;}}/>
             </div>
             
         </div>

@@ -5,7 +5,10 @@
     color: #fff;
     height: 100vh;
 }
-
+body {
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-y: auto; /* Add vertical scrollbar if needed */
+}
 .formBox {
     background: #77bfa3 ;
     padding: 20px;
@@ -64,9 +67,10 @@ footer a {
     background: #ef233c;
     width: 100px;
     margin-left: auto;
+    margin-bottom: 0px;
 }
 
-.downloadBtn {
+.downloadBtn,.loadCodeBtn,.saveBtn {
     background: #ffffff;
     color: #000000;
     width: 100%;
