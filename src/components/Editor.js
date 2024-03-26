@@ -6,7 +6,6 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/closebrackets';
 import ACTIONS from '../Actions';
-// import ACTIONS from '../Actions';
 
 const Editor = ({socketRef, sessionId, onCodeChange}) => {
     const editorRef = useRef(null);
@@ -48,7 +47,12 @@ useEffect(()=>{
     });}
 },[socketRef.current])
 
-  return <textarea id="realtimeEditor"> </textarea>;
+
+return (
+    <>
+      <textarea id="realtimeEditor"> </textarea>,
+    </>
+  );
 };
 
-export default Editor   
+export default Editor;

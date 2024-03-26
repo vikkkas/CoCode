@@ -130,6 +130,22 @@ function saveCodeToDatabase() {
         console.error(error);
     });
 }
+const loadCode = async () => {
+    // Fetch the current session id
+    const sessionId1 = sessionId; ;
+
+    // Fetch the document from the MongoDB database
+    const response = await axios.get(`http://localhost:5000/load-code/${sessionId1}`);
+
+    // Check if the session ids match
+    if (response.data.sessionId === sessionId) {
+        // Load the saved code into the editor
+        const savedCode = response.data.code;
+        // your code to load savedCode into the editor
+        console.log(savedCode);
+        codeRef.current = savedCode;
+    }
+};
     if (!location.state) {
         return <Navigate to="/" />;
     }
@@ -157,6 +173,7 @@ function saveCodeToDatabase() {
 
                 </div>
                 <button className ="btn downloadBtn" onClick={downloadEditorText}>Download Code</button>
+                <button onClick={loadCode}>Load Code</button>
                 <button className="btn saveBtn" onClick={saveCodeToDatabase}>Save Code</button>
                 <button className="btn copyBtn" onClick={copySessionId}> Copy Session ID</button>
                 <button className="btn leaveBtn" onClick={leaveSession}>Leave Session</button>

@@ -40,6 +40,26 @@ app.post('/save-code', async (req, res) => {
         res.status(500).send({ error: 'An error has occurred' });
     }
 });
+app.get('/load-code/:sessionId', async (req, res) => {
+    try {
+        // Extract the session id from the request parameters
+        const { sessionId } = req.params;
+
+        // Query the MongoDB database for the document with the matching session id
+        const document = await Code.findOne({ sessionId: sessionId });
+
+        if (document) {
+            // If a matching document is found, return the code in the response
+            res.send({ code: document.code, sessionId: document.sessionId });
+        } else {
+            // If no matching document is found, return an error message in the response
+            res.status(404).send({ error: 'No code found for this session id' });
+        }
+    } catch (err) {
+        // If an error occurs, return an error message in the response
+        res.status(500).send({ error: 'An error has occurred' });
+    }
+});
 
 // Connecting the build version with the server
 app.use(express.static('build'));
