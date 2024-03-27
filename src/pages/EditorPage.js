@@ -109,6 +109,8 @@ function downloadEditorText() {
 
     // Remove the link from the body
     document.body.removeChild(link);
+    toast.success('Code Downlaoded!');
+
 }
 
 function saveCodeToDatabase() {
@@ -126,6 +128,7 @@ function saveCodeToDatabase() {
     })
     .then(function (response) {
         console.log(response);
+        toast.success('Code saved Successfully!');
     })
     .catch(function (error) {
         console.error(error);
@@ -143,8 +146,9 @@ const loadCode = async () => {
         // Load the saved code into the editor
         const savedCode = response.data.code;
         // your code to load savedCode into the editor
-        console.log(savedCode);
         editorRef.current.setValue(savedCode);
+        toast.success('Saved Code Loaded to the editor!');
+
     }
 };
     if (!location.state) {

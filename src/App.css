@@ -10,7 +10,7 @@ body {
     overflow-y: auto; /* Add vertical scrollbar if needed */
 }
 .formBox {
-    background: #77bfa3 ;
+    background: #4a4e69;
     padding: 20px;
     border-radius: 10px;
     width: 400px;
@@ -110,7 +110,7 @@ footer a:hover {
 }
 
 .aside {
-    background: #d8f3dc;
+    background: #4a4e69;
     padding: 16px;
     color: #000000;
     display: flex;
